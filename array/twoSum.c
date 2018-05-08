@@ -3,123 +3,115 @@
 #include <assert.h>
 #include <string.h>
 
-#define HASH_CONSANT (0xffff)
-
-struct hash_element
+typedef struct hash_node
 {
-  unsigned int key;
+  int key;
   int index;
-  struct hash_element* next;
-};
+}hash_node;
 
-struct hash_head
+typedef struct hash_map
 {
-  struct hash_element* next;
-};
+  hash_node** hash_table;
+  int size;
+}hash_map;
 
-struct hash_head* create_hash()
+hash_map* create_hash(int size)
 {
-    struct hash_head* direct_map_hash = NULL;
-    unsigned int hash_count = HASH_CONSANT + 1;
-    unsigned int hash_size = sizeof(struct hash_head) * hash_count;    
-    direct_map_hash = malloc(hash_size);
-    assert(direct_map_hash);
-    memset(direct_map_hash, 0, hash_size); 
-    return direct_map_hash;
-}
-
-unsigned int hash(unsigned int key)
-{
-    unsigned int index = key & HASH_CONSANT;
-    return index;
-}
-
-void add_hash(struct hash_head *hash_table, unsigned int key, unsigned int index)
-{
-    assert(hash_table);
-    unsigned int hash_index = hash(key);
-    struct hash_head* head = hash_table + hash_index;
-    struct hash_element* element = NULL;    
+    hash_map* hash_map_ptr = malloc(sizeof(hash_map));  
+    assert(hash_map_ptr);
     
-    struct hash_element* add_ptr =  malloc(sizeof(struct hash_element)); 
-    assert(add_ptr);
-    add_ptr->key = key;
-    add_ptr->index = index;
-    add_ptr->next = NULL; 
-
-    if(head->next)
-    {
-        element = head->next;
-        while(element->next)
-        {
-            element = element->next;
-        }
-        element->next = add_ptr;
-    }
-    else
-    {
-        head->next = add_ptr;
-    }
+    hash_node** hash_table_ptr = calloc(size, sizeof(hash_node*));
+    assert(hash_table_ptr);
+    
+    hash_map_ptr->size = size;
+    hash_map_ptr->hash_table = hash_table_ptr;    
+    return hash_map_ptr;
 }
 
-struct hash_element* search_hash(struct hash_head *hash_table, unsigned int key, unsigned int exclude_index)
+inline int hash(int key, int size)
 {
-    assert(hash_table);
-    unsigned int hash_index = hash(key);
-    struct hash_head* head = hash_table + hash_index;
-    struct hash_element* element = NULL;
-    int match = 0;
+    return (abs(key) % size);
+}
 
-    if(head->next)
+void add_hash(hash_map* hash_map_ptr, int key, int index)
+{
+    assert(hash_map_ptr);
+    assert(index >= 0);
+    int hash_index = hash(key, hash_map_ptr->size);
+    hash_node* node_ptr = NULL;
+
+    while(hash_map_ptr->hash_table[hash_index])
     {
-        for(element = head->next; element; element = element->next)
+        if(hash_index < hash_map_ptr->size - 1)
         {
-            if(element->key == key && element->index != exclude_index)
-            {
-                match = 1;
-                break;
-            }
+            hash_index++;
         }
+        else
+        {
+            hash_index = 0;
+        }
+    }
+
+    node_ptr = malloc(sizeof(hash_node));
+    assert(node_ptr);
+    node_ptr->index = index;
+    node_ptr->key = key;  
+    hash_map_ptr->hash_table[hash_index] = node_ptr;
+}
+
+hash_node* search_hash(hash_map *hash_map_ptr, int key, int exclude_index)
+{
+    assert(hash_map_ptr);
+    assert(exclude_index >= 0);
+
+    //t search_count = 1;
+    int match = 0;
+    int hash_index = hash(key, hash_map_ptr->size);
+    hash_node* hash_node_ptr = hash_map_ptr->hash_table[hash_index];
+
+    while(hash_node_ptr)
+    {
+        if(hash_node_ptr->key == key && hash_node_ptr->index != exclude_index)
+        {
+            match = 1;
+            break;
+        }
+        else
+        {
+            hash_index++;
+            hash_index = (hash_index == hash_map_ptr->size ? 0 : hash_index); 
+            hash_node_ptr = hash_map_ptr->hash_table[hash_index];
+        }   
     }
 
     if(match == 0)
     {
-        element = NULL;
+        hash_node_ptr = NULL;
     }
-    
-    return element;
+    return hash_node_ptr;
 }
 
-void destroy_hash(struct hash_head *hash_table)
+void destroy_hash(hash_map* hash_map)
 {
-    assert(hash_table);
+    assert(hash_map);
     int i = 0;
-    struct hash_head* head = NULL;
-    struct hash_element* element = NULL;
-    struct hash_element* next = NULL;
 
-    for(i = 0; i < HASH_CONSANT + 1; i++)
+    if(hash_map->hash_table != NULL)
     {
-
-        head = hash_table + i;
-        if(head->next == NULL)
+        for(i = 0; i < hash_map->size; i++)
         {
-            continue;
-        }
-        else
-        {
-            element = head->next;
-            while(element->next)
+            if(hash_map->hash_table[i])
             {
-                next = element->next;
-                free(element);
-                element = next;
+                free(hash_map->hash_table[i]);
+                hash_map->hash_table[i] = NULL;
             }
-            free(element);
         }
+        free(hash_map->hash_table);
+        hash_map->hash_table = NULL;
     }
 
-    free(hash_table);
+    free(hash_map);
+    hash_map = NULL;
 }
 
 /**
@@ -135,34 +127,32 @@ int* twoSum(int* nums, int numsSize, int target) {
     result[0] = -1;
     result[1] = -1;
 
-    struct hash_head* hash_table = NULL;
-    struct hash_element* element = NULL;
-    hash_table = create_hash();
+    struct hash_map* hash_map_ptr = NULL;
+    struct hash_node* node_ptr = NULL;
+    hash_map_ptr = create_hash(numsSize);
 
     int i = 0;
-    unsigned int key = 0;
-    
-    for(i = 0; i < numsSize; i++)
+    int key = 0;
+    for(i = numsSize - 1; i >= 0; i--)
     {
-        key = nums[i];
-        add_hash(hash_table, key, i);
-    }
-
-    for(i = 0; i < numsSize; i++)
-    {
-        key = (unsigned int) (target - nums[i]);
-        element = search_hash(hash_table, key ,i);
-        if(element)
+        key = target - nums[i];
+        node_ptr = search_hash(hash_map_ptr, key ,i);
+        if(node_ptr)
         {
             result[0] = i;
-            result[1] = element->index;
+            result[1] = node_ptr->index;
             break;
+        }
+        else
+        {
+            add_hash(hash_map_ptr, nums[i], i);
         }
     }
     
-    destroy_hash(hash_table);
+    destroy_hash(hash_map_ptr);
     return result;
 }
+
 
 
 int main()
@@ -171,13 +161,7 @@ int main()
     int size = sizeof(test)/sizeof(int);
     int *res = NULL;
 
-    res =  twoSum(test, size, -8);
-    
-    //struct sub_max_res result;
-
-    //sub_max(test, 0, size - 1, &result );
-
-    //printf("max_sum = %d , left index %d, right index %d\n", result.max_sum, result.index_l, result.index_r);
+    res =  twoSum(test, size, -8);    
     printf("%d %d\n", res[0], res[1]);
     return 0;
     
