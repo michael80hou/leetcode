@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <string.h>
 
+#define LOAD_FACTOR (0.5)
+
 typedef struct hash_node
 {
   int key;
@@ -14,16 +16,17 @@ typedef struct hash_map
   hash_node** hash_table;
   int size;
 }hash_map;
-
 hash_map* create_hash(int size)
 {
     hash_map* hash_map_ptr = malloc(sizeof(hash_map));  
     assert(hash_map_ptr);
     
-    hash_node** hash_table_ptr = calloc(size, sizeof(hash_node*));
+    //load factors set to 50%
+    int hash_size = size/LOAD_FACTOR;    
+    hash_node** hash_table_ptr = calloc(hash_size, sizeof(hash_node*));
     assert(hash_table_ptr);
     
-    hash_map_ptr->size = size;
+    hash_map_ptr->size = hash_size;
     hash_map_ptr->hash_table = hash_table_ptr;    
     return hash_map_ptr;
 }
@@ -37,7 +40,7 @@ void add_hash(hash_map* hash_map_ptr, int key, int index)
 {
     assert(hash_map_ptr);
     assert(index >= 0);
-    int hash_index = hash(key, hash_map_ptr->size);
+    int hash_index = hash(key, hash_map_ptr->size * LOAD_FACTOR);
     hash_node* node_ptr = NULL;
 
     while(hash_map_ptr->hash_table[hash_index])
@@ -64,9 +67,9 @@ hash_node* search_hash(hash_map *hash_map_ptr, int key, int exclude_index)
     assert(hash_map_ptr);
     assert(exclude_index >= 0);
 
-    //t search_count = 1;
+    //int search_count = 1;
     int match = 0;
-    int hash_index = hash(key, hash_map_ptr->size);
+    int hash_index = hash(key, hash_map_ptr->size * LOAD_FACTOR);
     hash_node* hash_node_ptr = hash_map_ptr->hash_table[hash_index];
 
     while(hash_node_ptr)
@@ -128,7 +131,7 @@ int* twoSum(int* nums, int numsSize, int target) {
     result[1] = -1;
 
     struct hash_map* hash_map_ptr = NULL;
-    struct hash_node* node_ptr = NULL;
+    struct hash_node* node_ptr = NULL;    
     hash_map_ptr = create_hash(numsSize);
 
     int i = 0;
