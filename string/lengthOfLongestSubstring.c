@@ -11,14 +11,14 @@ int lengthOfLongestSubstring(char* s) {
     
     while(*(s + slide_right) != '\0')
     {
-        if(hash[*(s + slide_right)] == 0)
+        if(hash[(int)*(s + slide_right)] == 0)
         {
-            hash[*(s + slide_right)] = 1;
+            hash[(int)*(s + slide_right)] = 1;
             slide_right++;
         }
         else
         {
-            hash[*(s + slide_left)] = 0;
+            hash[(int)*(s + slide_left)] = 0;
             slide_left++;
         }
 
