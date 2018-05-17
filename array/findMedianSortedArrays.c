@@ -15,114 +15,67 @@ static inline int isOdd(int i) {
 }
 
 double findMedianSortedArrays(int* nums1, int nums1Size, int* nums2, int nums2Size) {
-    assert(nums1 && nums1Size > 0 && nums2 && nums2Size > 0);
+    assert(nums1 && nums1Size >= 0 && nums2 && nums2Size >= 0);
+    assert(!(nums1Size == 0 && nums2Size == 0));
 
-    if(nums1Size == 0 && nums2Size == 0) {
-        return 0;
-    } else if(nums1Size == 0) {
-        if(isOdd(nums2Size)) {
-            return nums2[nums2Size/2];
-        } else {
-            return (nums2[nums2Size/2] + nums2[nums2Size/2 - 1]) / 2.0;
-        }
-    } else if(nums2Size == 0){
-        if(isOdd(nums1Size)) {
-            return nums1[nums1Size/2];
-        } else {
-            return (nums1[nums1Size/2] + nums1[nums1Size/2 - 1]) / 2.0;
-        }
-
-    }
-    
-    int* a = NULL;
-    int *b = NULL;
-    //assume n >= m
-    int m = 0, n = 0;
-    int i = 0, j = 0, range_left = 0, range_right = 0;
+    int* a = nums1;
+    int* b = nums2;    
+    int m = nums1Size, n = nums2Size;
+    int i = 0, j = 0;  
     double res = 0;
     double left_max = 0;
     double right_min = 0;
 
-    if(nums1Size >= nums2Size) {
-        a = nums2;
-        m = nums2Size;
-        b = nums1;
-        n = nums1Size;
-    } else {
-        a = nums1;
-        m = nums1Size;
-        b = nums2;
-        n = nums2Size;
+    //assume n >= m
+    if(m > n) {
+        return findMedianSortedArrays(b, n, a, m);
     }
 
-    for(range_left = 0, range_right = m; ; ) {
-        // value range [0, m], edge case i = 0 or i = m
+    if(m == 0) {
+        return isOdd(n) ? b[n/2] : ((b[n/2] + b[n/2 - 1]) / 2.0);        
+    } 
+    
+    int range_left = 0, range_right = m;
+    while(range_left <= range_right) {
         i = (range_left + range_right)/2;
-        // value range [0, n], edge case j = 0 or j = n
         j = (n + m + 1) / 2 - i;
-
-        printf("range left %d range_right %d i %d j %d\n",range_left, range_right, i, j);
 
         if(i != 0 && i != m) {
             if(a[i] >= b[j - 1] && a[i - 1] <= b[j]) {
+                left_max = max(a[i - 1], b[j - 1]);
+                right_min = min(a[i], b[j]);
+                res = isOdd(n + m) ? left_max : (left_max + right_min) / 2.0;
                 break;
             } else if(a[i] < b[j - 1]) {
-                if(range_left == i) {
-                    range_left = range_right;
-                } else {
-                    range_left = i;
-                }
+                range_left = i + 1;
             } else {
-                range_right = i;
-            }
+                range_right = i - 1;
+            }            
         } else if(i == 0) {
             if(a[i] >= b[j - 1]) {
+                left_max = b[j - 1];
+                right_min = (j == n) ? a[i] : min(a[i], b[j]);
+                res = isOdd(n + m) ? left_max : (left_max + right_min) / 2.0;
                 break;
             } else {
-                range_left = range_right;
+                range_left = i + 1;
             }
+            
         } else {
+            //i == m
             if(a[i - 1] <= b[j]) {
+                left_max = (j == 0) ? a[i - 1] : max(a[i - 1], b[j - 1]);
+                right_min = b[j];
+                res = isOdd(n + m) ? left_max : (left_max + right_min) / 2.0;
                 break;
+            } else {
+                range_right = i - 1;
             }
-        }
-      
+        }     
+        
     }
-
-    
-
-    if(isOdd(n + m)) {
-        if(i == 0) {
-            res = b[j - 1];
-        } else if(j == 0){
-            res = a[i - 1];
-        } else {
-            res = max (a[i -1], b[j - 1]);
-        }
-    } else {
-        if(i == 0) {
-            left_max = b[j - 1];
-        } else if(j == 0){
-            left_max = a[i - 1];
-        } else {
-            left_max = max(a[i - 1], b[j - 1]);
-        }
-
-        if(i == m)
-        {
-            right_min = b[j];
-        } else if( j == n){
-            right_min = a[i];
-        } else {
-            right_min = min(a[i], b[j]);
-        }
-
-        res = (left_max + right_min) / 2.0;
-    }
-
-
-    return res;
-    
+ 
+    return res;    
 }
 
 int main() {
