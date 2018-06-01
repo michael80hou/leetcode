@@ -17,7 +17,7 @@ char* longestPalindrome(char* s) {
             if(max > r - l) {
                 break;
             }
-
+            int valid = 0;
             while(s[i] == s[j]) {
                 if(i == j || j - i == 1) {
                     if(r - l > max) {
@@ -25,13 +25,16 @@ char* longestPalindrome(char* s) {
                         maxl = l;
                         maxr = r;                    
                     }
+                    valid = 1;
                     break;
                 }
 
                 i++; 
                 j--;
+            } 
 
-            }       
+            if(valid) { break; }
+
         }
     }
 
