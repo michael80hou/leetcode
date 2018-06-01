@@ -7,13 +7,12 @@ TWO_SUM_SRC_CC=array/twoSum.cc
 MEDIAN_SORTED_ARRAY=array/findMedianSortedArrays.c
 
 LEN_LONGEST_SUBSTR=string/lengthOfLongestSubstring.c
-LONGEST_PALINDROME=string/longestPalindrome.c
 
 TEST_SRC=test/test.c
 TEST_SRC_CC=test/test.cc
 
 
-PROGRAMS=twoSum twoSum_cc findMedianSortedArrays longestSubString longestPalindrome
+PROGRAMS=twoSum twoSum_cc findMedianSortedArrays longestSubString
 OUTPUT=out
 
 all: ${PROGRAMS}
@@ -26,8 +25,6 @@ findMedianSortedArrays:
 	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(MEDIAN_SORTED_ARRAY) ${LDFLAGS} 
 longestSubString:
 	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(LEN_LONGEST_SUBSTR) ${LDFLAGS} 
-longestPalindrome:
-	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(LONGEST_PALINDROME) ${LDFLAGS} 
 test_c:
 	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(TEST_SRC) ${LDFLAGS} 
 test_cc:
