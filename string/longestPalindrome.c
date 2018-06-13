@@ -46,7 +46,7 @@ char* longestPalindrome(char* s) {
     
 }
 #else 
-//O(n^2)
+//O(n^2), DP
 char* longestPalindrome(char* s) {
     assert(s);
     int len = strlen(s);    
@@ -83,6 +83,10 @@ char* longestPalindrome(char* s) {
     }
 
     s[index_r + 1] = '\0';
+    if(p) {
+        free(p);
+        p = NULL;
+    }
     return (s + index_l);
     
 
