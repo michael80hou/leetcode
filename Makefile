@@ -8,12 +8,13 @@ MEDIAN_SORTED_ARRAY=array/findMedianSortedArrays.c
 
 LEN_LONGEST_SUBSTR=string/lengthOfLongestSubstring.c
 LONGEST_PALINDROME=string/longestPalindrome.c
+ZIGZAG=string/zigzag.c
 
 TEST_SRC=test/test.c
 TEST_SRC_CC=test/test.cc
 
 
-PROGRAMS=twoSum twoSum_cc findMedianSortedArrays longestSubString longestPalindrome
+PROGRAMS=twoSum twoSum_cc findMedianSortedArrays longestSubString longestPalindrome zigzag
 OUTPUT=out
 
 all: ${PROGRAMS}
@@ -28,6 +29,8 @@ longestSubString:
 	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(LEN_LONGEST_SUBSTR) ${LDFLAGS} 
 longestPalindrome:
 	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(LONGEST_PALINDROME) ${LDFLAGS} 
+zigzag:
+	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(ZIGZAG) ${LDFLAGS} 
 test_c:
 	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(TEST_SRC) ${LDFLAGS} 
 test_cc:
