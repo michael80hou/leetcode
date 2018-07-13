@@ -19,10 +19,11 @@ TEST_SRC_CC=test/test.cc
 
 INT_TO_ROMAN_SRC=unclarified/intToRoman.c
 THREE_SUM_SRC=unclarified/3sum.cc
+THREE_SUM_CLOSEST_SRC=unclarified/3sumClosest.cc
 
 
 PROGRAMS=twoSum twoSum_cc findMedianSortedArrays longestSubString longestPalindrome zigzag reverse \
-REMatching maxArea intToRoman 3sum
+REMatching maxArea intToRoman 3sum 3sumClosest
 OUTPUT=out
 
 all: ${PROGRAMS}
@@ -51,6 +52,8 @@ intToRoman:
 	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(INT_TO_ROMAN_SRC) ${LDFLAGS} 
 3sum:
 	${CC} ${CFLAGS_CC} -o $(OUTPUT)/$@ $(THREE_SUM_SRC) ${LDFLAGS_CC} 
+3sumClosest:
+	${CC} ${CFLAGS_CC} -o $(OUTPUT)/$@ $(THREE_SUM_CLOSEST_SRC) ${LDFLAGS_CC} 
 	
 test_c:
 	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(TEST_SRC) ${LDFLAGS} 
