@@ -17,11 +17,12 @@ REVERSE=math/reverse.c
 TEST_SRC=test/test.c
 TEST_SRC_CC=test/test.cc
 
-INT_TO_ROMAN=unclarified/intToRoman.c
+INT_TO_ROMAN_SRC=unclarified/intToRoman.c
+THREE_SUM_SRC=unclarified/3sum.cc
 
 
 PROGRAMS=twoSum twoSum_cc findMedianSortedArrays longestSubString longestPalindrome zigzag reverse \
-REMatching maxArea intToRoman
+REMatching maxArea intToRoman 3sum
 OUTPUT=out
 
 all: ${PROGRAMS}
@@ -47,7 +48,9 @@ reverse:
 	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(REVERSE) ${LDFLAGS} 
 
 intToRoman:
-	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(INT_TO_ROMAN) ${LDFLAGS} 
+	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(INT_TO_ROMAN_SRC) ${LDFLAGS} 
+3sum:
+	${CC} ${CFLAGS_CC} -o $(OUTPUT)/$@ $(THREE_SUM_SRC) ${LDFLAGS_CC} 
 	
 test_c:
 	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(TEST_SRC) ${LDFLAGS} 
