@@ -11,6 +11,7 @@ LEN_LONGEST_SUBSTR=string/lengthOfLongestSubstring.c
 LONGEST_PALINDROME=string/longestPalindrome.c
 ZIGZAG=string/zigzag.c
 RE_MATCHING=string/REMatching.c
+STRING_TO_INTEGER=string/string2Integer.c
 
 REVERSE=math/reverse.c
 
@@ -23,7 +24,7 @@ THREE_SUM_CLOSEST_SRC=unclarified/3sumClosest.cc
 
 
 PROGRAMS=twoSum twoSum_cc findMedianSortedArrays longestSubString longestPalindrome zigzag reverse \
-REMatching maxArea intToRoman 3sum 3sumClosest
+REMatching maxArea intToRoman 3sum 3sumClosest myAtoi
 OUTPUT=out
 
 all: ${PROGRAMS}
@@ -47,7 +48,9 @@ REMatching:
 	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(RE_MATCHING) ${LDFLAGS} 	
 reverse:
 	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(REVERSE) ${LDFLAGS} 
-
+myAtoi:
+	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(STRING_TO_INTEGER) ${LDFLAGS}	
+	
 intToRoman:
 	${CC} ${CFLAGS} -o $(OUTPUT)/$@ $(INT_TO_ROMAN_SRC) ${LDFLAGS} 
 3sum:
