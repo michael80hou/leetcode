@@ -12,6 +12,3 @@ $(targets): %: %.c
 
 $(cc_targets): %_cc: %.cc
 	${CC} ${CFLAGS_CC} -o $(OUTPUT)/$@ $< ${LDFLAGS_CC}
-	
-clean:
-	rm -fr $(OUTPUT)/*
