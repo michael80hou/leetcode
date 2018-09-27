@@ -4,7 +4,7 @@
 #include <string.h>
 #include <math.h>
 
-char letter[10][5] = {
+char mapping[10][5] = {
 "",
 "",
 "abc",
@@ -17,73 +17,69 @@ char letter[10][5] = {
 "wxyz"
 };
 
-int total[10] = {0, 0, 3, 3, 3, 3, 3, 4, 3, 4 };
+int num_len[10] = {0, 0, 3, 3, 3, 3, 3, 4, 3, 4 };
 
 /**
  * Return an array of size *returnSize.
  * Note: The returned array must be malloced, assume caller calls free().
  */
+
 char**  letterCombinations(char* digits, int* returnSize) {
     assert(digits);
     assert(returnSize);
 
-#if 0
-    char c = '\0';
     int len = strlen(digits);
-    int rows = 4^len;
-
-    char **res = malloc(sizeof(char[len]) * rows);
-    assert(res);
-
-    int i = 0, j = 0, k = 0;
-    for(i = 0; i < len; i++) {
-        for(j = 0; j < 4 && letter[digits[i] - '2'][j] != '\0'; j++) {
-            //res[k][j] = letter[digits[i] - '2'][j];
-            printf("%c ", letter[digits[i] - '2'][j]);
-        }
-
-        printf("\n");
+    if(len == 0) {
+        *returnSize = 0;
+        return NULL;
     }
-
-    return (char**)res;
-#else
-    int len = strlen(digits);
-
+    
     int *ans = calloc(sizeof(int), len);
     assert(ans);
 
-    int j = len - 1;
-
-    while(1) {
-        int i = 0;//, int j = 0;
-
-        for(i = 0; i < len; i++) {
-            printf("%c", letter[digits[i] - '0'][ans[i]] );
-
-        }
-        printf("\n");
-
-
-        //j = len - 1;
-        if(j  >= 0)
-        {
-            if(ans[j] < total[j] - 1) {
-                ans[j]++;
-            } else {
-                ans[j] = 0;
-                if(j == 0) {
-                    break;
-                }else {                    
-                    j--;
-                }
-            }
-        }
+    int res_len = 1;
+    for(int i = 0; i < len; i++) {
+        res_len *= num_len[digits[i] - '0'];
     }
 
-    return NULL;
+    //char (*res)[len + 1] = calloc(sizeof(char[len]) + 1, res_len);
+    //assert(res);
 
-    
-#endif    
+    char **res = NULL;
+    res = calloc(sizeof(char *), res_len);
+    assert(res);
+    for(int i = 0; i < res_len; i++) {
+        res[i] = calloc(sizeof(char[len]) + 1, res_len);
+        assert(res[i]);
+    }
+
+    int k = 0;    
+    while(1) {
+        
+        for(int i = 0; i < len; i++) {
+            res[k][i] = mapping[digits[i] - '0'][ans[i]];
+        }
+        k++;
+
+
+        int j = len - 1;
+        while(j >= 0) {
+            if(ans[j] < num_len[digits[j] - '0'] - 1) {
+                ans[j]++; 
+                break;
+            } else {
+                ans[j] = 0;
+                j--;
+            }
+        }
+
+        if(j < 0)
+            break;
+    }
+
+    *returnSize = k;
+    return (char**) res;   
+
 }
 
 
@@ -93,12 +89,19 @@ char**  letterCombinations(char* digits, int* returnSize) {
 int main()
 {
     char digits[] = {"23"};
-    int returnSize = 9;
+    int returnSize = 0;
 
-    char **res =     letterCombinations((char *)&digits, &returnSize);
-
+    int len = strlen(digits);
+    //char (*res)[len + 1] = NULL;
+    char **res;
     
+    //res = (char (*)[len + 1]) letterCombinations((char *)&digits, &returnSize);
+    res = letterCombinations((char *)&digits, &returnSize);
 
+
+    for(int i = 0; i < returnSize; i++) {
+        printf("%s\n", res[i]);
+    }
 
     return 0;
 
