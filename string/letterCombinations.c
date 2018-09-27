@@ -5,7 +5,8 @@
 #include <math.h>
 
 
-#define DP_VERSION 1
+#define DP_VERSION 0
+#define REC_VERSION 1
 char mapping[10][5] = {
 "",
 "",
@@ -25,7 +26,7 @@ int num_len[10] = {0, 0, 3, 3, 3, 3, 3, 4, 3, 4 };
  * Return an array of size *returnSize.
  * Note: The returned array must be malloced, assume caller calls free().
  */
-#ifdef DP_VERSION
+#if (DP_VERSION == 1)
 char**  letterCombinations(char* digits, int* returnSize) {
     assert(digits);
     assert(returnSize);
@@ -48,8 +49,8 @@ char**  letterCombinations(char* digits, int* returnSize) {
         res[i] = calloc(sizeof(char[len]) + 1, res_len);
         assert(res[i]);
     }
-    int factor = 1;
     
+    int factor = 1;    
     for(int j = len - 1; j >= 0; j--) {    
         int digits_len = num_len[digits[j] - '0'];
         for(int i = 0; i < res_len; i++) {            
@@ -63,6 +64,58 @@ char**  letterCombinations(char* digits, int* returnSize) {
     return res;
 
 }
+#elif (REC_VERSION == 1)
+
+int hnd(char* digits, int index, int len, int res_len, char** res) {
+
+    int num = digits[index] - '0';
+    int digits_len = num_len[num];
+    
+    if(index == len - 1) {
+        for(int i = 0; i < res_len; i++) {
+            res[i][index] = mapping[num][i % digits_len];
+        }
+        return digits_len;
+    } else {
+        int block = hnd(digits, index + 1, len, res_len, res);
+        for(int i = 0; i < res_len; i++) {
+            res[i][index] = mapping[num][i / block % digits_len];
+        }
+        return block*digits_len;
+    }
+}
+
+char**  letterCombinations(char* digits, int* returnSize) {
+    assert(digits);
+    assert(returnSize);
+
+    int len = strlen(digits);
+    if(len == 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+    
+    int res_len = 1;
+    for(int i = 0; i < len; i++) {
+        res_len *= num_len[digits[i] - '0'];
+    }
+    *returnSize = res_len;
+
+    char **res = NULL;
+    res = calloc(sizeof(char *), res_len);
+    assert(res);
+    for(int i = 0; i < res_len; i++) {
+        res[i] = calloc(sizeof(char[len]) + 1, res_len);
+        assert(res[i]);
+    }
+
+    hnd(digits, 0, len, res_len, res);
+
+    return res;
+
+}
+
+
 #else
 char**  letterCombinations(char* digits, int* returnSize) {
     assert(digits);
