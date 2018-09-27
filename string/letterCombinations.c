@@ -4,6 +4,8 @@
 #include <string.h>
 #include <math.h>
 
+
+#define DP_VERSION 1
 char mapping[10][5] = {
 "",
 "",
@@ -23,7 +25,45 @@ int num_len[10] = {0, 0, 3, 3, 3, 3, 3, 4, 3, 4 };
  * Return an array of size *returnSize.
  * Note: The returned array must be malloced, assume caller calls free().
  */
+#ifdef DP_VERSION
+char**  letterCombinations(char* digits, int* returnSize) {
+    assert(digits);
+    assert(returnSize);
 
+    int len = strlen(digits);
+    if(len == 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+    
+    int res_len = 1;
+    for(int i = 0; i < len; i++) {
+        res_len *= num_len[digits[i] - '0'];
+    }
+
+    char **res = NULL;
+    res = calloc(sizeof(char *), res_len);
+    assert(res);
+    for(int i = 0; i < res_len; i++) {
+        res[i] = calloc(sizeof(char[len]) + 1, res_len);
+        assert(res[i]);
+    }
+    int factor = 1;
+    
+    for(int j = len - 1; j >= 0; j--) {    
+        int digits_len = num_len[digits[j] - '0'];
+        for(int i = 0; i < res_len; i++) {            
+            res[i][j] = mapping[digits[j] - '0'][i / factor % digits_len];  
+        }
+        factor *= digits_len;
+    }
+
+    *returnSize = res_len;
+
+    return res;
+
+}
+#else
 char**  letterCombinations(char* digits, int* returnSize) {
     assert(digits);
     assert(returnSize);
@@ -82,7 +122,7 @@ char**  letterCombinations(char* digits, int* returnSize) {
 
 }
 
-
+#endif
 
 
 
@@ -98,10 +138,13 @@ int main()
     //res = (char (*)[len + 1]) letterCombinations((char *)&digits, &returnSize);
     res = letterCombinations((char *)&digits, &returnSize);
 
+    printf("size %d\n", returnSize);
 
     for(int i = 0; i < returnSize; i++) {
         printf("%s\n", res[i]);
     }
+
+    //todo: add free res
 
     return 0;
 
