@@ -184,7 +184,7 @@ int main()
     char digits[] = {"23"};
     int returnSize = 0;
 
-    int len = strlen(digits);
+    //int len = strlen(digits);
     //char (*res)[len + 1] = NULL;
     char **res;
     
