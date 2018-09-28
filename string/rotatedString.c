@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <string.h>
 
+#if 0
+
 int rotatedString(char *s, char *d)
 {
     assert(s);
@@ -54,7 +56,32 @@ int rotatedString(char *s, char *d)
     return res;
 }
 
+#else
 
+int rotatedString(char *s, char *d)
+{
+    assert(s);
+    assert(d);
+
+    int len_s = strlen(s);
+    int len_d = strlen(d);
+    int res = 0;
+
+    if(len_s != len_d) {
+        return res;
+    }
+
+    char *tmpd = calloc(sizeof(char), (len_s * 2 + 1));
+    assert(tmpd);
+
+    strncpy(tmpd, d, len_d);
+    strncpy(tmpd + len_d, d, len_d + 1);
+
+    res = strstr(tmpd, s) == NULL ? 0 : 1;
+    return res;
+} 
+
+#endif
 
 
 int main()
