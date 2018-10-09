@@ -9,26 +9,26 @@
  * Note: The returned array must be malloced, assume caller calls free().
  */
 int* findSubstring(char* s, char** words, int wordsSize, int* returnSize) {
+    int len_s = strlen(s);
+    int wordsLen = strlen(words[0]);
+    if(0 == len_s || 0 == wordsSize || len_s < wordsLen * wordsSize) {
+        *returnSize = 0;
+        return NULL;
+    }
 
     int *flags = calloc(sizeof(int), wordsSize);
     if(NULL == flags) {
         return NULL;
-    } 
-
-    int len_s = strlen(s);
-    if(0 == len_s || 0 == wordsSize) {
-        *returnSize = 0;
-        return NULL;
     }
+
     int *res = calloc(sizeof(int), len_s);
     if(NULL == res) {
         return NULL;
     } 
     int res_index = 0;
     
-    int wordsLen = strlen(words[0]);
-    int left = 0, right = wordsLen * wordsSize;
     
+    int left = 0, right = wordsLen * wordsSize;    
     for(; right <= len_s; left++, right++) {
         memset(flags, 0, sizeof(int) * wordsSize);
         int valid = 1;
