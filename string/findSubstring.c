@@ -26,7 +26,11 @@ int* findSubstring(char* s, char** words, int wordsSize, int* returnSize) {
         return NULL;
     } 
     int res_index = 0;
-    
+
+    int (*table)[len_s] = calloc(len_s * sizeof(int), wordsSize);
+    if(NULL == table) {
+        return NULL;
+    }
     
     int left = 0, right = wordsLen * wordsSize;    
     for(; right <= len_s; left++, right++) {
@@ -36,14 +40,26 @@ int* findSubstring(char* s, char** words, int wordsSize, int* returnSize) {
             int hit = 0;
             for(int j = 0; j < wordsSize; j++) {
                 if(0 == flags[j]) {
-                    if(0 == strncmp(s + i, words[j], wordsLen)) {
-                        flags[j] = 1;
-                        hit = 1;
-                        break;
-                    } else {
-                        continue;
-                    }
-                } 
+                        if(0 == table[j][i]){
+                            if(0 == strncmp(s + i, words[j], wordsLen)) {
+                                flags[j] = 1;
+                                table[j][i] = 1;
+                                hit = 1;
+                                break;  
+                            } else {
+                                table[j][i] = -1; 
+                            }
+                            
+                        } else if(1 == table[j][i]) {
+                                flags[j] = 1;
+                                hit = 1;
+                                break;                             
+                        }
+
+                } else {
+                    continue;
+                }
+          
             }
 
             if(0 == hit) {
@@ -67,13 +83,14 @@ int* findSubstring(char* s, char** words, int wordsSize, int* returnSize) {
         flags = NULL;        
     }
 
-    return res;
+    if(table) {
+        free(table);
+        table = NULL;        
+    }
 
+    return res;
     
 }
-
-
-
 
 
 int main()
