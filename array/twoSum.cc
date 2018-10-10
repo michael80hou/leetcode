@@ -18,11 +18,11 @@ public:
     	  for(i = 0; i < nums.size(); i++)
     	  {
     		    int key = target - nums[i];
-            auto iter = umap.find(key);
+                auto iter = umap.find(key);
     		    if(iter == umap.end())
     		    {
     		        //umap.insert(std::make_pair(nums[i], i));
-                umap.insert(pair<int, int>{nums[i], i});
+                    umap.insert(pair<int, int>{nums[i], i});
     		    }
     		    else
     		    {

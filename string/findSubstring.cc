@@ -221,85 +221,67 @@ int *findSubstring(char* s, char** words, int wordsSize,
 
 #else
 
-/**
- * Return an array of size *returnSize.
- * Note: The returned array must be malloced, assume caller calls free().
- */
-int* findSubstring(char* s, char** words, int wordsSize, int* returnSize) {
-    int len_s = strlen(s);
-    int wordsLen = strlen(words[0]);
-    if(0 == len_s || 0 == wordsSize || len_s < wordsLen * wordsSize) {
-        *returnSize = 0;
-        return NULL;
+#include <iostream>
+#include <cassert>
+#include <unordered_map>
+#include <vector>
+
+using std::vector;
+using std::unordered_map;
+using std::pair;
+
+class Solution {
+public:
+    vector<int> findSubstring(string s, vector<string>& words) {
+        
     }
+};
 
-    int *flags = calloc(sizeof(int), wordsSize);
-    if(NULL == flags) {
-        return NULL;
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target)
+    {
+        vector<int> result = {-1, -1};
+        vector<int>::size_type i = 0;
+
+        unordered_map<int, int> umap;
+    	  for(i = 0; i < nums.size(); i++)
+    	  {
+    		    int key = target - nums[i];
+                auto iter = umap.find(key);
+    		    if(iter == umap.end())
+    		    {
+    		        //umap.insert(std::make_pair(nums[i], i));
+                    umap.insert(pair<int, int>{nums[i], i});
+    		    }
+    		    else
+    		    {
+    		       result[0] = iter->second;
+    		       result[1] = i;
+              break;
+    		    }
+    	   }
+
+        return result;
+
     }
+};
 
-    int *res = calloc(sizeof(int), len_s);
-    if(NULL == res) {
-        return NULL;
-    } 
-    int res_index = 0;
+int main()
+{
+    std::vector<int> test{-1, -2, -3, -4, -5};
+    std::vector<int> res{-1, -1};
 
-    int (*table)[len_s] = calloc(len_s * sizeof(int), wordsSize);
-    if(NULL == table) {
-        return NULL;
-    }
-    
-    int left = 0, right = wordsLen * wordsSize;    
-    for(; right <= len_s; left++, right++) {
-        memset(flags, 0, sizeof(int) * wordsSize);
-        int valid = 1;
-        for(int i = left; i < right; i += wordsLen) {
-            int hit = 0;
-            for(int j = 0; j < wordsSize; j++) {
-                if(0 == flags[j]) {
-                    if(0 == table[j][i]){
-                        if(0 == strncmp(s + i, words[j], wordsLen)) {
-                            flags[j] = 1;
-                            table[j][i] = 1;
-                            hit = 1;
-                            break;  
-                        } else {
-                            table[j][i] = -1; 
-                        }
-                        
-                    } else if(1 == table[j][i]) {
-                            flags[j] = 1;
-                            hit = 1;
-                            break;                             
-                    }
-                } 
-            }
+    class Solution* ptr = new Solution();
+    res =  ptr->twoSum(test,-8);
+    std::cout<<res[0]<<" "<<res[1]<<std::endl;
+    //printf("%d %d\n", res[0], res[1]);
+    return 0;
 
-            if(0 == hit) {
-                valid = 0;
-                break;
-            }                
-        }
-
-        if(1 == valid) {
-            res[res_index++] = left;
-        }        
-    }
-
-    *returnSize = res_index;
-
-    if(flags) {
-        free(flags);
-        flags = NULL;        
-    }
-
-    if(table) {
-        free(table);
-        table = NULL;        
-    }
-
-    return res;    
 }
+
+
 #endif
 
 int main()
