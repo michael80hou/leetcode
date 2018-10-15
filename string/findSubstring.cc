@@ -26,10 +26,18 @@ public:
         vector<int> result;
         unordered_map<string, int> umap;
 
-        auto word_len = words[0].length();
         auto words_size = words.size();
+        auto word_len = 0;
+        if(words_size > 0) {
+            word_len = words[0].length();
+        }
 
-        if(0 == word_len || 0 == words_size || s.length() < words_size * word_len) {
+        auto string_len = s.length();
+
+        if(0 == word_len || 
+        0 == words_size || 
+        0 == string_len || 
+        string_len < words_size * word_len) {
             return result;
         }
 
@@ -45,7 +53,7 @@ public:
         size_t w_left = 0;
         size_t w_right = words_size * word_len;
 
-        for(;w_right <= s.length(); w_left++, w_right++) {        
+        for(;w_right <= string_len; w_left++, w_right++) {        
             unordered_map<string, int> tmp(umap);
             int hit = 1;
             for(size_t i = w_left; i < w_right; i += word_len) {
