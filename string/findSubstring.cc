@@ -18,55 +18,94 @@ using std::pair;
 using std::vector;
 using std::unordered_map;
 using std::pair;
+using std::string;
 
 class Solution {
 public:
     vector<int> findSubstring(string s, vector<string>& words) {
+        vector<int> result;
+        unordered_map<string, int> umap;
+
+        auto word_len = words[0].length();
+        auto words_size = words.size();
+
+        if(0 == word_len || 0 == words_size || s.length() < words_size * word_len) {
+            return result;
+        }
+
+        for(auto i = words.begin(); i != words.end(); i++) {
+            auto iter = umap.find(*i);
+            if(umap.end() == iter) {
+                umap.insert(pair<string, int>{*i, 1});
+            } else {
+                ++iter->second;
+            }            
+        }
+
+        size_t w_left = 0;
+        size_t w_right = words_size * word_len;
+
+        for(;w_right <= s.length(); w_left++, w_right++) {        
+            unordered_map<string, int> tmp(umap);
+            int hit = 1;
+            for(size_t i = w_left; i < w_right; i += word_len) {
+                string key = s.substr(i, word_len);                
+                auto iter = tmp.find(key);
+
+                if(tmp.end() == iter) {
+                    hit = 0;
+                    break;
+                } else {
+                    if(0 >= iter->second) {
+                        hit = 0;
+                        break;
+                    } else {
+                        iter->second--;
+                    }
+                }
+            }
+
+            if(1 == hit) {
+                result.push_back(w_left);
+            }
+        }
+
         
+        return result;       
         
     }
 };
 
 
-class Solution {
-public:
-    vector<int> twoSum(vector<int>& nums, int target)
-    {
-        vector<int> result = {-1, -1};
-        vector<int>::size_type i = 0;
 
-        unordered_map<int, int> umap;
-    	  for(i = 0; i < nums.size(); i++)
-    	  {
-    		    int key = target - nums[i];
-                auto iter = umap.find(key);
-    		    if(iter == umap.end())
-    		    {
-    		        //umap.insert(std::make_pair(nums[i], i));
-                    umap.insert(pair<int, int>{nums[i], i});
-    		    }
-    		    else
-    		    {
-    		       result[0] = iter->second;
-    		       result[1] = i;
-              break;
-    		    }
-    	   }
-
-        return result;
-
-    }
-};
 
 int main()
 {
-    std::vector<int> test{-1, -2, -3, -4, -5};
-    std::vector<int> res{-1, -1};
+    string test = "barfoothefoobarman";
+    
+#if 1
+    string words_array[2] = {"foo","bar"};
+    vector<string> words;
+
+    for(int i = 0; i < 2; i++) {
+        words.push_back(words_array[i]);
+    }
+#else 
+    vector<string> words;
+    words.push_back("foo");
+    words.push_back("bar");
+#endif
+    std::vector<int> res;
 
     class Solution* ptr = new Solution();
-    res =  ptr->twoSum(test,-8);
-    std::cout<<res[0]<<" "<<res[1]<<std::endl;
-    //printf("%d %d\n", res[0], res[1]);
+    res =  ptr->findSubstring(test,words);
+
+    for(auto i = res.begin(); i != res.end(); i++) {
+        std::cout<<*i<<" ";
+    }
+
+    std::cout<<std::endl;
+
     return 0;
 
 }
