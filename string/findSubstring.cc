@@ -24,30 +24,21 @@ class Solution {
 public:
     vector<int> findSubstring(string s, vector<string>& words) {
         vector<int> result;
-        unordered_map<string, int> umap;
-
-        auto words_size = words.size();
-        auto word_len = 0;
-        if(words_size > 0) {
-            word_len = words[0].length();
+        if(s.empty() || words.empty()) {
+            return result;
         }
+        
+        auto words_size = words.size();
+        auto word_len = words[0].size();
+        auto string_len = s.size();
 
-        auto string_len = s.length();
-
-        if(0 == word_len || 
-        0 == words_size || 
-        0 == string_len || 
-        string_len < words_size * word_len) {
+        if(string_len < words_size * word_len) {
             return result;
         }
 
-        for(auto i = words.begin(); i != words.end(); i++) {
-            auto iter = umap.find(*i);
-            if(umap.end() == iter) {
-                umap.insert(pair<string, int>{*i, 1});
-            } else {
-                ++iter->second;
-            }            
+        unordered_map<string, int> umap;
+        for(auto word : words) {
+            umap[word]++;
         }
 
         size_t w_left = 0;
@@ -57,7 +48,7 @@ public:
             unordered_map<string, int> tmp(umap);
             int hit = 1;
             for(size_t i = w_left; i < w_right; i += word_len) {
-                string key = s.substr(i, word_len);                
+                string key = s.substr(i, word_len);  
                 auto iter = tmp.find(key);
 
                 if(tmp.end() == iter) {
@@ -71,13 +62,13 @@ public:
                         iter->second--;
                     }
                 }
+
             }
 
             if(1 == hit) {
                 result.push_back(w_left);
             }
         }
-
         
         return result;       
         
@@ -89,20 +80,14 @@ public:
 
 int main()
 {
-    string test = "barfoothefoobarman";
+    string test = "wordgoodgoodgoodbestword";
     
-#if 1
-    string words_array[2] = {"foo","bar"};
+    string words_array[4] = {"word","good","best","word"};
     vector<string> words;
 
-    for(int i = 0; i < 2; i++) {
+    for(int i = 0; i < 4; i++) {
         words.push_back(words_array[i]);
     }
-#else 
-    vector<string> words;
-    words.push_back("foo");
-    words.push_back("bar");
-#endif
     std::vector<int> res;
 
     class Solution* ptr = new Solution();
