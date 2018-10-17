@@ -41,8 +41,6 @@ int main()
     int k = 3;
 
     res =  longestSubstringKDistinct(s, k);
-
-
     printf("%d \n", res);
     
     return 0;
