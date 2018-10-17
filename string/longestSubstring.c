@@ -8,7 +8,11 @@ int characterReplacement(char* s, int k) {
     assert(s);
     assert(k>=0);
 
-    int letter_map[26] = {0};
+    int *map = malloc(sizeof(int) * 26);
+    if(NULL == map) {
+        return -1;
+    }
+    
     int len = strlen(s);
     if(len == 0) {
         return 0;
@@ -18,22 +22,28 @@ int characterReplacement(char* s, int k) {
         return len;
     }
 
-    int l = 0, r = k;
-    int max = 0;
     int res = 0;
+    for(int l = 0; l <= len - k; l++) {
+        memset(map, 0, sizeof(int) * 26);
+        int max = 0;
+        for(int r = l; r < len; r++) {
+            int index = s[r] - 'A';
+            map[index]++;
+            max = max > map[index] ? max : map[index]; 
 
-    for(int l = 0; l < len - k; l++) {
-        for(int i = l; i < len; i++) {
-            int index = s[i] - 'A';
-            letter_map[index]++;
-            max = max > letter_map[index] ? max : letter_map[index]; 
 
-            int num = i - l + 1;
+            int num = r - l + 1;
             if(num - max > k) {
-                res = res > num -1 ? res : num - 1;
+                res = res > num - 1 ? res : num - 1;
                 break;
             }
+
+            if(len - 1 == r) {
+                res = res > len - l ? res : len - l;
+            }
         }
+
+
     }
 
     return res;
@@ -43,19 +53,14 @@ int characterReplacement(char* s, int k) {
 
 int main()
 {
-    int* res = NULL;
-    char* s = "barfoothefoobarman";
-    char* words[2] = {"foo","bar"};
+    int res = 0;
+    char* s = "AABABBA";
+    int k = 1;
 
-    int size = 0;
-    res =  findSubstring(s, (char**)&words, 2, &size);
+    res =  characterReplacement(s, k);
 
-    printf("%d \n", size);
-    for(int i = 0; i < size; i++) {
-        printf("%d ", res[i]);
-    }
 
-    printf("\n");
+    printf("%d \n", res);
     
     return 0;
 
