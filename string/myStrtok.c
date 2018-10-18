@@ -4,57 +4,67 @@
 #include <string.h>
 
 char *mystrtok(char *str, const char *delim) {
-
-    static int start = 0;
-    static char *ptr = NULL;
-    char *res = NULL;
-    int delim_len = strlen(delim);
-
-    if(str) {
-        start = 1;
-        ptr = str;
-        res = str;       
-    } else {
-        if(1 == start) {            
-            res = ptr;
-        } else {
-            ptr = NULL;
-            res = NULL;           
-        }
+    if('\0' == *delim) {
+        return str;
     }
 
-    if(res) {
-        char *tmp = ptr;
-        while(strncmp(tmp, delim, delim_len) && *tmp != '\0') {
-            tmp++;
+    static char *_buffer = NULL;
+    char *ret = NULL;
+    _buffer = str ? str: _buffer;
+    
+    if(NULL == _buffer || '\0' == _buffer[0]) {
+        return NULL;
+    }
+
+    int stop = 0, found = 0;
+    ret = _buffer;
+
+    for(char *b = _buffer; *b != '\0'; b++) {
+        for(const char *d = delim; *d != '\0'; d++) {
+            if(*b == *d) {
+                found = 1;
+                *b = '\0';
+                _buffer = b + 1;
+
+                if(b == ret) {
+                    ret++;
+                } else {
+                    stop = 1;
+                }
+                
+                break;
+            }          
         }
 
-        if('\0' == *tmp) {
-            start = 0;
-        } else {
-            *tmp = '\0';
-            ptr = tmp + delim_len;
-        }
+        if(stop) break;
+   }
+
+
+    if(0 == found)
+        _buffer = NULL;
+
+    if('\0' == *ret) {
+        ret = NULL;
     }
     
-    return res;    
+    return ret;    
 }
 
 
 
 
 int main () {
-   char str[80] = "This is - www.runoob.com - website";
-   const char s[10] = "runoob";
+   char str[80] = "AAAA";
+   const char s[10] = "A";
    char *token;
    
 
-   token = mystrtok(str, s);
+   token = strtok(str, s);
 
    while( token != NULL ) {
       printf( "%s\n", token );
     
-      token = mystrtok(NULL, s);
+      token = strtok(NULL, s);
    }
    
    return(0);
