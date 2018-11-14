@@ -22,7 +22,8 @@ public:
     		    if(iter == umap.end())
     		    {
     		        //umap.insert(std::make_pair(nums[i], i));
-                    umap.insert(pair<int, int>{nums[i], i});
+                    //umap.insert(pair<int, int>{nums[i], i});
+                    umap.insert(pair<int, int>(nums[i], i));
     		    }
     		    else
     		    {
