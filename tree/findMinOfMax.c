@@ -11,16 +11,15 @@ struct TreeNode {
 
 typedef struct TreeNode Node;
 
+#if 0
 int findMinOfMax(struct TreeNode* root, int k) {
     int ret = 0;
 
     if(NULL == root) {
         return -1;
     }
-    
-    if(root->key == k) {
-        ret = k;
-    } else if(root->key > k) {
+
+    if(root->key > k) {
         int tmp = findMinOfMax(root->left, k);
         ret = (tmp == -1) ? root->key : tmp;
     } else {
@@ -28,25 +27,46 @@ int findMinOfMax(struct TreeNode* root, int k) {
     }
 
     return ret;
-    
-}
 
+}
+#else
+int findMinOfMax(struct TreeNode* root, int k) {
+    int res = -1;
+
+    if(NULL == root) {
+        return -1;
+    }
+
+    struct TreeNode* cur = root;
+    while(cur) {
+        if(cur->key <= k) {
+            cur = cur->right;
+        } else {
+            res = cur->key;
+            cur = cur->left;
+        }
+    }
+
+    return res;
+
+}
+#endif
 void insertTree(struct TreeNode* root, struct TreeNode* z) {
 
     if(NULL == root) {
         root = z;
     }
-    
+
     struct TreeNode* x = root;
     struct TreeNode* y = NULL;
-    
+
     while(x) {
         y = x;
         if(x->key > z->key) {
             x = x->left;
         } else {
             x = x->right;
-        }        
+        }
     }
 
     if(y->key > z->key) {
@@ -64,8 +84,8 @@ void printTree(struct TreeNode* root) {
     printTree(root->left);
     printf("%d ", root->key);
     printTree(root->right);
-    
-    
+
+
 }
 
 
@@ -94,12 +114,10 @@ int main()
 
     printTree(&root);
     printf("\n");
-    
-    int res =  findMinOfMax(&root, 19);
+
+    int res =  findMinOfMax(&root, 20);
 
     printf("%d \n", res);
     return 0;
 
 }
-
-
